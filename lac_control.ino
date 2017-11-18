@@ -2,8 +2,6 @@
 
 #include "tow_controller.h"
 
-int lac_d =50;
-
 void lac_setup()
 {
     pinMode(DC_MOTOR_EN, OUTPUT);
@@ -18,6 +16,7 @@ void lac_setup()
 claw_state grab()
 {
     PRINTLN("grabbing");
+    int lac_d = lac_state();
     if(lac_d <80){
         PRINTLN("extending ");
         PRINT(" lac_d ");
@@ -25,24 +24,27 @@ claw_state grab()
         analogWrite(DC_MOTOR_EN, HIGH);
         digitalWrite(DC_MOTOR_1, LOW);
         digitalWrite(DC_MOTOR_2, HIGH);
+        return CLOSING;
     }
+    else 
+        return CLOSED;
 }
 
 claw_state release()
 {
     PRINTLN("release");
-    while(lac_d >2){
-        PRINT("retracting ");
-        int lacp_val = analogRead(DC_POT_PIN);
-        PRINT(" lac_p ");
-        PRINT(lacp_val);
-        lac_d = map(lacp_val,20,975,0,100);;
+    int lac_d = lac_state();
+    if(lac_d >2){
         PRINT(" lac_d ");
         PRINTLN(lac_d);
         analogWrite(DC_MOTOR_EN, HIGH);
         digitalWrite(DC_MOTOR_2, LOW);
         digitalWrite(DC_MOTOR_1, HIGH);
+        return OPENING;
     }
+    else 
+        return OPEN;
+
 }
 
 int lac_state()
