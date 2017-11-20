@@ -48,7 +48,6 @@ boolean limit_winch()
 {
     int lm1 = digitalRead(LIMIT_SWITCH_1);
     int lm2 = digitalRead(LIMIT_SWITCH_2);
-
     return lm1 && lm2;
 }
 

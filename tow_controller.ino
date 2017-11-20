@@ -17,13 +17,14 @@
 
 #include <ros.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
 
 #include "tow_controller.h"
 
 ros::NodeHandle  nh;
 
-claw_state claw_status;
-winch_state winch_status;
+claw_state claw_status = OPEN;
+winch_state winch_status = RETRACTED;
 
 std_msgs::String winch_msg;
 std_msgs::String claw_msg;
@@ -38,6 +39,10 @@ void winch_cb(const std_msgs::String &cmd_msg){
     }
 }
 void claw_cb( const std_msgs::String &cmd_msg){
+    PRINTLN("Clawback");
+    PRINTLN(cmd_msg.data);
+    /*claw_status = OPENING;*/
+  digitalWrite(13, HIGH-digitalRead(13));   // blink the led
 
     if (cmd_msg.data == "close") {
             claw_status = CLOSING;
@@ -46,28 +51,29 @@ void claw_cb( const std_msgs::String &cmd_msg){
     }
 }
 
-ros::Subscriber<std_msgs::String> winch_sub("towing/winch/control ", winch_cb);
-ros::Subscriber<std_msgs::String> claw_sub("towing/claw/control", claw_cb);
+/*ros::Subscriber<std_msgs::String> winch_sub("winch", winch_cb);*/
+ros::Subscriber<std_msgs::String> claw_sub("claw", claw_cb);
 
 ros::Publisher claw_pub("towing/claw/status", &claw_msg);
-ros::Publisher winch_pub("towing/winch/status", &winch_msg);
-
+/*ros::Publisher winch_pub("towing/winch/status", &winch_msg);*/
 
 long trigger_rest =0;
 
 void setup(){
 
+  pinMode(13, OUTPUT);
+
     lac_setup();
 
     nh.initNode();
-    nh.subscribe(winch_sub);
+    /*nh.subscribe(winch_sub);*/
+    nh.advertise(claw_pub);
     nh.subscribe(claw_sub);
 
-    Serial.begin(9600);
-    PRINTLN("startup");
+    Serial.begin(57600);
+    Serial.println("startup");
 
-    while ( lac_state()>3)
-        release();
+    calibrate_lac();
 
     for(int i = 1;i<101;i++)
     {
@@ -76,13 +82,13 @@ void setup(){
     }
 
     trigger_rest/=100;
+    PRINT("trigger rest: ");
+    PRINTLN(trigger_rest);
 
-    PRINTLN("end startup");
+    Serial.println("end startup");
 }
 
 void loop(){
-    nh.spinOnce();
-
     switch(winch_status){
         case RETRACTED:
             //winch should respond to state being set in callback
@@ -94,8 +100,7 @@ void loop(){
             break;
         case STOPPED:
             winch_msg.data = "stopped";
-            break;
-        case EXTENDING:
+            break; case EXTENDING:
             winch_status = extend();
             winch_msg.data = "releasing";
             break;
@@ -104,33 +109,42 @@ void loop(){
             //We don't actually have the ability to determine this at yet
             break;
     }
-    int lac_d = lac_state(); ;
+    int trigger_state = analogRead(HAIRTRIGGER_PIN);
+    /*PRINTLN(trigger_state);*/
     switch(claw_status){
         case OPEN:
-            
+    /*Serial.println("OPEN");*/
             claw_msg.data = "open";
-            if (abs(lac_d - trigger_rest)>20){
+            stop_actuator();
+            if (abs(trigger_state - trigger_rest)>20){
+            PRINTLN(trigger_state);
                 claw_status = grab(); 
                 claw_msg.data = "closing";
             }
             break;
         case CLOSING:
+    /*Serial.println("CLOSING");*/
             claw_status = grab();
             claw_msg.data = "closing";
             break;
         case CLOSED:
+    /*Serial.println("CLOSED");*/
             //claw should respond to state being set to "OPENING" in callback
+            stop_actuator();
             claw_msg.data = "closed";
             break;
         case OPENING:
+    /*Serial.println("OPENING");*/
             claw_status = release();
             claw_msg.data = "opening";
             break;
     }
    
 
-    winch_pub.publish(&winch_msg);
+    /*winch_pub.publish(&winch_msg);*/
     claw_pub.publish(&claw_msg);
+    nh.logdebug("Testting");
 
-    delay(1);
+    nh.spinOnce();
+    delay(100);
 }
