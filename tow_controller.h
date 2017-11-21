@@ -4,7 +4,7 @@
 //this file contains the pin numbers and basic calibration constants
 //for the arduino controlling the towing mechanisms
 
-#define DEBUG 
+//#define DEBUG 
 
 #ifdef DEBUG
 #define PRINT(x) Serial.print(x)
@@ -32,17 +32,18 @@
 
 
 typedef enum{
-    OPEN,
-    CLOSING,
-    CLOSED,
-    OPENING
+    CLAW_STOPPED =0,
+    CLAW_CLOSED,
+    CLAW_OPEN,
+    CLAW_CLOSING,
+    CLAW_OPENING
 }claw_state;
 
 typedef enum{
-    RETRACTED,
-    RETRACTING,
-    STOPPED,
-    EXTENDING,
-    EXTENDED
+    WINCH_STOPPED =0,
+    WINCH_RETRACTED,
+    WINCH_EXTENDED,
+    WINCH_RETRACTING,
+    WINCH_EXTENDING,
 }winch_state;
 #endif

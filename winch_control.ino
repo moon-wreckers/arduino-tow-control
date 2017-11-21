@@ -18,7 +18,7 @@ winch_state extend()
 {
     PRINTLN("paying out winch ");
     servo.write(1000); 
-    return EXTENDING;
+    return WINCH_EXTENDING;
 }
 
 winch_state retract()
@@ -26,10 +26,10 @@ winch_state retract()
     PRINTLN("retracting winch");
     if(limit_winch){
         servo.write(1500); 
-        return RETRACTING;
+        return WINCH_RETRACTING;
     } else{
         servo.write(2000); 
-        return RETRACTED;
+        return WINCH_RETRACTED;
     }
 }
 
@@ -38,9 +38,9 @@ winch_state stop()
     PRINTLN("stopping winch");
     servo.write(1500); 
     if(limit_winch){
-        return RETRACTED;
+        return WINCH_RETRACTED;
     }else{
-        return STOPPED;
+        return WINCH_STOPPED;
     }
 }
 

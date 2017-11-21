@@ -27,10 +27,10 @@ claw_state grab()
         analogWrite(DC_MOTOR_EN, HIGH);
         digitalWrite(DC_MOTOR_1, LOW);
         digitalWrite(DC_MOTOR_2, HIGH);
-        return CLOSING;
+        return CLAW_CLOSING;
     }
     else 
-        return CLOSED;
+        return CLAW_CLOSED;
 }
 
 claw_state release()
@@ -43,10 +43,10 @@ claw_state release()
         analogWrite(DC_MOTOR_EN, HIGH);
         digitalWrite(DC_MOTOR_2, LOW);
         digitalWrite(DC_MOTOR_1, HIGH);
-        return OPENING;
+        return CLAW_OPENING;
     }
     else 
-        return OPEN;
+        return CLAW_OPEN;
 
 }
 
