@@ -33,7 +33,7 @@ void winch_cb(const std_msgs::UInt16 &cmd_msg){
         winch_status = WINCH_RETRACTING;
     }else if (cmd_msg.data == 2){
         winch_status = WINCH_EXTENDING;
-    }else if (cmd_msg.data == 3) {
+    }else if (cmd_msg.data == 0) {
         winch_status = WINCH_STOPPED;
     }
 }
@@ -47,11 +47,13 @@ void claw_cb( const std_msgs::UInt16 &cmd_msg){
             claw_status = CLAW_CLOSING;
     }else if (cmd_msg.data==2){
             claw_status = CLAW_OPENING;
+    }else if (cmd_msg.data==0){
+            claw_status = CLAW_STOPPED;
     }
 }
 
-ros::Subscriber<std_msgs::UInt16> winch_sub("winch", winch_cb);
-ros::Subscriber<std_msgs::UInt16> claw_sub("claw", claw_cb);
+ros::Subscriber<std_msgs::UInt16> winch_sub("towing/winch/control", winch_cb);
+ros::Subscriber<std_msgs::UInt16> claw_sub("towing/claw/control", claw_cb);
 
 ros::Publisher claw_pub("towing/claw/status", &claw_msg);
 ros::Publisher winch_pub("towing/winch/status", &winch_msg);
@@ -65,6 +67,8 @@ void setup(){
     /*Serial.println("startup");*/
 
     lac_setup();
+    winch_setup();
+
     nh.getHardware()->setBaud(115200);
     nh.initNode();
     nh.subscribe(winch_sub);
