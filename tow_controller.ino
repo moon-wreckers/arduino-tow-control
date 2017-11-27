@@ -75,15 +75,10 @@ void setup(){
     nh.subscribe(claw_sub);
 
     nh.advertise(claw_pub);
-
-    /*for (int i = 0;i<10;i++){*/
-        /*delay(100);*/
-    /*}*/
     nh.advertise(winch_pub);
 
     /*Serial.begin(115200);*/
     /*Serial.println("startup");*/
-
 
     calibrate_lac();
 
@@ -125,6 +120,7 @@ void loop(){
     int trigger_state = analogRead(HAIRTRIGGER_PIN);
     /*PRINTLN(trigger_state);*/
     switch(claw_status){
+        case CLAW_STOPPED:
         case CLAW_OPEN:
     /*Serial.println("OPEN");*/
             /*claw_msg.data = "open";*/
