@@ -151,7 +151,7 @@ void loop(){
     }
 
     if (limit_winch()){
-       stop(); 
+       claw_status=stop(); 
     }
 
     claw_msg.data = claw_status;
