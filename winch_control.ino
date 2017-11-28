@@ -17,14 +17,14 @@ void winch_setup()
 winch_state extend()
 {
     PRINTLN("paying out winch ");
-    servo.write(1000); 
+    servo.write(2000); 
     return WINCH_EXTENDING;
 }
 
 winch_state retract()
 {
     PRINTLN("retracting winch");
-    servo.write(2000); 
+    servo.write(1000); 
     return WINCH_RETRACTING;
 }
 
