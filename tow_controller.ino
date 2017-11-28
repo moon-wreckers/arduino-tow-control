@@ -118,6 +118,13 @@ void loop(){
             //We don't actually have the ability to determine this at yet
             break;
     }
+
+    if (limit_winch()){
+       winch_status=stop(); 
+    }
+
+
+
     int trigger_state = analogRead(HAIRTRIGGER_PIN);
     /*PRINTLN(trigger_state);*/
     switch(claw_status){
@@ -150,9 +157,6 @@ void loop(){
             break;
     }
 
-    if (limit_winch()){
-       claw_status=stop(); 
-    }
 
     claw_msg.data = claw_status;
     winch_msg.data = winch_status;
