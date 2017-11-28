@@ -17,17 +17,18 @@ void winch_setup()
 winch_state extend()
 {
     PRINTLN("paying out winch ");
-    servo.write(1000); 
-    return WINCH_EXTENDING;
+    servo.write(1000); return WINCH_EXTENDING;
 }
 
 winch_state retract()
 {
     PRINTLN("retracting winch");
     if(limit_winch){
+        digitalWrite(13, HIGH);   // blink the led
         servo.write(1500); 
         return WINCH_RETRACTED;
     } else{
+        digitalWrite(13, LOW);   // blink the led
         servo.write(2000); 
         return WINCH_RETRACTING;
     }
