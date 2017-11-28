@@ -106,7 +106,8 @@ void loop(){
             /*winch_msg.data = "retracting";*/
             break;
         case WINCH_STOPPED:
-            /*winch_msg.data = "stopped";*/
+            stop();
+           /*winch_msg.data = "stopped";*/
             break; 
         case WINCH_EXTENDING:
             winch_status = extend();
