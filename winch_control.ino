@@ -24,11 +24,9 @@ winch_state retract()
 {
     PRINTLN("retracting winch");
     if(limit_winch){
-        digitalWrite(13, HIGH);   // blink the led
         servo.write(1500); 
         return WINCH_RETRACTED;
     } else{
-        digitalWrite(13, LOW);   // blink the led
         servo.write(2000); 
         return WINCH_RETRACTING;
     }
@@ -49,6 +47,10 @@ boolean limit_winch()
 {
     int lm1 = digitalRead(LIMIT_SWITCH_1);
     int lm2 = digitalRead(LIMIT_SWITCH_2);
+    if (lm1&&lm2)
+        digitalWrite(13, HIGH);   // blink the led
+        else
+        digitalWrite(13, LOW);   // blink the led
     return lm1 && lm2;
 }
 

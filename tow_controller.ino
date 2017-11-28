@@ -149,6 +149,7 @@ void loop(){
             /*claw_msg.data = "opening";*/
             break;
     }
+    limit_winch();
 
     claw_msg.data = claw_status;
     winch_msg.data = winch_status;
