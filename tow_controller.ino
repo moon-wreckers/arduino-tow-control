@@ -103,7 +103,10 @@ void loop(){
             break;
         case WINCH_RETRACTING:
             winch_status = retract();
-            /*winch_msg.data = "retracting";*/
+            if (limit_winch()){
+               winch_status=stop(); 
+            }
+           /*winch_msg.data = "retracting";*/
             break;
         case WINCH_STOPPED:
             stop();
@@ -117,10 +120,6 @@ void loop(){
             /*winch_msg.data = "released";*/
             //We don't actually have the ability to determine this at yet
             break;
-    }
-
-    if (limit_winch()){
-       winch_status=stop(); 
     }
 
 
@@ -161,8 +160,8 @@ void loop(){
     claw_msg.data = claw_status;
     winch_msg.data = winch_status;
    
-    winch_pub.publish(&winch_msg);
     claw_pub.publish(&claw_msg);
+    winch_pub.publish(&winch_msg);
 
     nh.spinOnce();
 
